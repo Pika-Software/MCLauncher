@@ -16,19 +16,27 @@ namespace Console_Launcher
     {
         static Process Minecraft;
 
+        static string FindFileFromPATH(string file)
+        {
+            var PATH = Environment.GetEnvironmentVariable("PATH").Split(";");
+            foreach (var dir in PATH)
+            {
+                var path = Path.Combine(dir, file);
+                if (File.Exists(path)) {
+                    return path;
+                }
+            }
+
+            return null;
+        }
+
         static string GetJava()
         {
             string java_home = Environment.GetEnvironmentVariable("JAVA_HOME");
             if (!string.IsNullOrEmpty(java_home))
-            {
-                foreach (string str in Environment.GetEnvironmentVariable("PATH").Split(";"))
-                {
-                    if (str.Contains("Oracle\\Java\\javapath"))
-                        return str + "\\javaw.exe";
-                }
-            }
+                return Path.Combine(java_home, "bin\\javaw.exe").Replace("/", "\\");
 
-            return java_home + "\\bin\\javaw.exe";
+            return java_home = FindFileFromPATH("jawaw.exe");
         }
 
         static int GetMemory()
@@ -38,11 +46,10 @@ namespace Console_Launcher
 
         static async Task Main(string[] args)
         {
-
             MinecraftPath data_folder = new MinecraftPath("data");
             string data_path = data_folder.ToString() + "\\";
 
-            UserConfig cfg = new UserConfig(data_path + "launcher.json");
+            UserConfig cfg = new UserConfig(Path.Combine(data_path, "launcher.json"));
 
             if (string.IsNullOrEmpty(cfg.JavaPath))
                 cfg.JavaPath = GetJava();
