@@ -54,6 +54,9 @@ namespace Console_Launcher
             if (string.IsNullOrEmpty(cfg.JavaPath))
                 cfg.JavaPath = GetJava();
 
+            if (File.Exists(cfg.JavaPath))
+                throw new FileNotFoundException("javaw.exe not found. Please, set proper JavaPath in launcher.json. Or install java.");
+
             while (string.IsNullOrEmpty(cfg.Nickname) || cfg.Nickname.Length < 5)
             {
                 Console.Write("Enter nickname: ");
