@@ -9,6 +9,8 @@ using System.Diagnostics;
 using CmlLib.Core.Downloader;
 using CmlLib.Core.Files;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+
 
 namespace Console_Launcher
 {
@@ -16,6 +18,15 @@ namespace Console_Launcher
     {
         static Process Minecraft;
 
+
+        [STAThread]
+        static void Main()
+        {
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Forms.Main());
+        }
         static string GetJava()
         {
             string java_home = Environment.GetEnvironmentVariable("JAVA_HOME");
@@ -102,11 +113,14 @@ namespace Console_Launcher
             Minecraft = await launcher.CreateProcessAsync(cfg.Version, launchOption);
             
             ProcessUtil util = new ProcessUtil(Minecraft);
-            util.OutputReceived += (s, str) => log4j.Print(str);
+            util.OutputReceived += (s, str) => Console.WriteLine(str);//log4j.Print(str);
             util.Exited += new EventHandler(minecraft_Exited);
 
             util.StartWithEvents();
             Minecraft.WaitForExit();
+            if (true) {
+
+            }
         }
 
         static void minecraft_Exited(object sender, System.EventArgs e)
